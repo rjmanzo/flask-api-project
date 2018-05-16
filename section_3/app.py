@@ -16,15 +16,9 @@ stores = [
 
 # this method find de store name within the stores list
 
-
-def find_store(name):
-    for store in stores
-        if store['name'] == name
-            return True
-    return False
-
-
 # POST /store data : {name:}
+
+
 @app.route("/store", methods=["POST"])
 def create_store():
     request_data = request.get_json()
@@ -32,10 +26,9 @@ def create_store():
         "name": request_data['name'],
         "items": []
     }
-    stores.append(stores)  # append the new store to stores
-
+    stores.append(new_store)  # append the new store to stores
     # if all was good return the new store list
-    return jsonify({"stores": stores})
+    return jsonify({"store": new_store})
 
 
 # GET /store
@@ -49,7 +42,7 @@ def get_stores():
 @app.route("/store/<string:name>")
 def get_store(name):
     for store in stores:
-        if store['name'] == name
+        if store['name'] == name:
             return jsonify(store)  # if store name match then return the store
     return jsonify({'message': 'Store not found!'})
 
@@ -58,10 +51,12 @@ def get_store(name):
 
 @app.route("/store/<string:name>/item", methods=["POST"])
 def create_store_item(name):
+    request_data = request.get_json()
     for store in stores:
-        request_data = request.get_json()
-        new_store_item = {'name': request_data['name'],
-                          'price': request_data['price']}
+        new_store_item = {
+            "name": request_data['name'],
+            "price": request_data['price']
+        }
         store['items'].append(new_store_item)  # save new item
         return jsonify(store)  # return updated store
 
@@ -71,9 +66,10 @@ def create_store_item(name):
 
 
 @app.route("/store/<string:name>/item")
-def get_store_item(name, item):
+def get_store_items(name):
     for store in stores:
-        if store['name'] == name
-        # if store name match then return the store items
+        if store['name'] == name:
+            # if store name match then return the store
             return jsonify({'items': store['items']})
+
     return jsonify({'message': 'Store not found!'})
