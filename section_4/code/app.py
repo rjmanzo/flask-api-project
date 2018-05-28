@@ -1,25 +1,27 @@
 from flask import Flask, request
 from flask_restful import Resource, Api, reqparse
-import local_settings
+from flask_jwt import JWT, jwt_required
+
+# import the security settings for logIN
+from security import authenticate, identity
 
 app = Flask(__name__)
 app.secret_key = '01245552357SDGKSDHSDGSDG352NKSGSSDS75'
 api = Api(app)
 
+# /auth (the instance create a new endpoint)
+jwt = JWT(app, authenticate, identity)
+
 items = []
 
 
 class Item(Resource):
-
     # we define the request argument at top. POST & PUT need the same data
     parser = reqparse.RequestParser()
-    parser.add_argument(
-        'price',
-        type=float,
-        required=True,
-        help='this field cannot be left blank!'
-    )
+    parser.add_argument('price', type=float, required=True,
+                        help='this field cannot be left blank!')
 
+    @jwt_required()
     def get(self, name):
         # for item in items:
         #     if item['name'] == name:
@@ -36,7 +38,7 @@ class Item(Resource):
 
         # silent=True prevent an error and return null
         #data = request.get_json(silent=True)
-        data = Item.parser.parser_arg()
+        data = Item.parser.parse_args()
 
         item = {
             'name': name,
@@ -44,6 +46,8 @@ class Item(Resource):
         }
 
         items.append(item)
+
+        return item, 201  # return the created item
 
     def delete(self, name):
         # when a variable it's filter and be reasign to the same variable you have to set global
@@ -58,7 +62,7 @@ class Item(Resource):
 
     def put(self, name):
 
-        data = Item.parser.parser_arg()
+        data = Item.parser.parse_args()
 
         item = next(filter(lambda x: x['name'] == name, items), None)
 

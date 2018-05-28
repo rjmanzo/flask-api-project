@@ -1,9 +1,8 @@
 from user import User
-import local_settings
 
 users = [
 
-    User(1, 'bob', '1234')
+    User(1, 'bob', '1234'),
 
 ]
 
@@ -16,7 +15,7 @@ userid_mapping = {user.id: user for user in users}
 
 def authenticate(username, password):
     user = username_mapping.get(username, None)
-    if user and user.password == password
+    if user and user.password == password:
         return user
 
 
